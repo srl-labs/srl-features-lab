@@ -1,0 +1,51 @@
+name: feat
+
+topology:
+  kinds:
+    srl:
+      image: ghcr.io/nokia/srlinux:22.6.3
+    linux:
+      image: ghcr.io/hellt/network-multitool
+
+  nodes:
+    srl1:
+      kind: srl
+      type: ixrd2
+      startup-config: ./configs/srl1.cfg
+
+    srl2:
+      kind: srl
+      type: ixrd2
+      startup-config: ./configs/srl2.cfg
+
+    client1:
+      kind: linux
+      binds:
+        - ./configs/client1.sh:/tmp/client1.sh
+      exec:
+        - bash /tmp/client1.sh
+
+    client2:
+      kind: linux
+      binds:
+        - ./configs/client2.sh:/tmp/client2.sh
+      exec:
+        - bash /tmp/client2.sh
+
+
+    client3:
+      kind: linux
+      binds:
+        - ./configs/client3.sh:/tmp/client3.sh
+      exec:
+        - bash /tmp/client3.sh
+
+  links:
+    - endpoints: ["srl1:e1-52", "srl2:e1-52"]
+    - endpoints: ["srl1:e1-1", "client1:eth1"]
+    - endpoints: ["srl1:e1-2", "client1:eth2"]
+    - endpoints: ["srl1:e1-3", "client1:eth3"]
+    - endpoints: ["srl1:e1-4", "client1:eth4"]
+    - endpoints: ["srl2:e1-1", "client2:eth1"]
+    - endpoints: ["srl1:e1-10", "client3:eth1"]
+    - endpoints: ["srl2:e1-10", "client3:eth2"]
